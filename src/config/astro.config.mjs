@@ -1,10 +1,10 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
+import tailwind from '@astrojs/tailwind'
 
 // https://astro.build/config
 export default defineConfig({
   build: {
-    // Example: Generate `page.html` instead of `page/index.html` during build.
     format: 'file'
   },
   markdown: {
@@ -12,15 +12,25 @@ export default defineConfig({
       theme: 'dark-plus'
     }
   },
-  integrations: [mdx()],
+  integrations: [
+    mdx(),
+    tailwind({
+      config: {
+        path: './tailwind.config.cjs', // o .mjs según tu configuración
+        applyBaseStyles: false // Opcional: controla si se aplican estilos base
+      }
+    })
+  ],
   srcDir: './src/html',
-  cacheDir: './dist/pages',
-  outDir: './dist/pages',
+  outDir: './dist',
   vite: {
     server: {
       watch: {
-        ignored: ['!**/dist/**'],
+        ignored: ['!**/node_modules/**', '**/dist/**']
       }
+    },
+    optimizeDeps: {
+      exclude: ['@resvg/resvg-js']
     }
   }
 })

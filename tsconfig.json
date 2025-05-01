@@ -1,6 +1,7 @@
 {
   "root": true,
   "compilerOptions": {
+    "types": ["astro/client"],
     "noFallthroughCasesInSwitch": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -16,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/html/components/*"],
+      "@components/dashboard/*": ["src/html/components/dashboard/*"]
     },
     /* Language and Environment */
     "target": "es6",

@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Roles {
+  id          Int       @id @default(autoincrement())
+  nombre_rol  String    @unique
+  descripcion String
+  usuarios    Usuarios[]
+}
+
+model Usuarios {
+  id                 Int               @id @default(autoincrement())
+  id_rol             Int
+  nombre             String
+  apellido           String
+  correo             String            @unique
+  contraseña         String
+  telefono           String?
+  fecha_registro     DateTime          @default(now())
+  ultima_modificacion DateTime          @default(now())
+  activo             Boolean           @default(true)
+
+  // Relaciones
+  rol                Roles             @relation(fields: [id_rol], references: [id])
+  categoriasCreadas  Categorias[]      @relation("CreadorCategoria")
+  categoriasModificadas Categorias[]   @relation("ModificadorCategoria")
+  productosCreados   Productos[]       @relation("CreadorProducto")
+  productosModificados Productos[]     @relation("ModificadorProducto")
+  inventario         Inventario[]
+  proveedores        Proveedores[]
+  compras            Compras[]
+  ventasCliente      Ventas[]          @relation("Cliente")
+  ventasVendedor     Ventas[]          @relation("Vendedor")
+  promociones        Promociones[]
+  logs               LogsActividad[]
+}
+
+model Categorias {
+  id                 Int          @id @default(autoincrement())
+  nombre             String
+  descripcion        String?
+  creado_por         Int
+  fecha_creacion     DateTime     @default(now())
+  ultima_modificacion DateTime?
+  modificado_por     Int?
+
+  // Relaciones
+  creador            Usuarios     @relation("CreadorCategoria", fields: [creado_por], references: [id])
+  modificador        Usuarios?    @relation("ModificadorCategoria", fields: [modificado_por], references: [id])
+  productos          Productos[]
+}
+
+model Productos {
+  id                 Int                   @id @default(autoincrement())
+  id_categoria       Int
+  codigo             String                @unique
+  nombre             String
+  descripcion        String?
+  precio_venta       Float
+  precio_costo       Float?
+  imagen             String?
+  creado_por         Int
+  fecha_creacion     DateTime              @default(now())
+  ultima_modificacion DateTime?
+  modificado_por     Int?
+  activo             Boolean               @default(true)
+
+  // Relaciones
+  categoria          Categorias            @relation(fields: [id_categoria], references: [id])
+  creador            Usuarios              @relation("CreadorProducto", fields: [creado_por], references: [id])
+  modificador        Usuarios?             @relation("ModificadorProducto", fields: [modificado_por], references: [id])
+  inventario         Inventario?
+  detallesCompra     DetallesCompra[]
+  detallesVenta      DetallesVenta[]
+  promociones        ProductosPromociones[]
+}
+
+model Inventario {
+  id                  Int       @id @default(autoincrement())
+  id_producto         Int       @unique
+  stock               Int       @default(0)
+  stock_minimo        Int       @default(5)
+  ultima_actualizacion DateTime  @default(now())
+  actualizado_por     Int
+
+  // Relaciones
+  producto            Productos @relation(fields: [id_producto], references: [id])
+  actualizador        Usuarios  @relation(fields: [actualizado_por], references: [id])
+}
+
+model Proveedores {
+  id              Int       @id @default(autoincrement())
+  nombre          String
+  contacto        String?
+  telefono        String?
+  correo          String?
+  direccion       String?
+  creado_por      Int
+  fecha_creacion  DateTime  @default(now())
+  activo          Boolean   @default(true)
+
+  // Relaciones
+  creador         Usuarios  @relation(fields: [creado_por], references: [id])
+  compras         Compras[]
+}
+
+model Compras {
+  id             Int              @id @default(autoincrement())
+  id_proveedor   Int
+  id_usuario     Int
+  fecha_compra   DateTime         @default(now())
+  numero_factura String?
+  total          Float
+  estado         String           @default("Completada")
+
+  // Relaciones
+  proveedor      Proveedores      @relation(fields: [id_proveedor], references: [id])
+  usuario        Usuarios         @relation(fields: [id_usuario], references: [id])
+  detalles       DetallesCompra[]
+}
+
+model DetallesCompra {
+  id             Int       @id @default(autoincrement())
+  id_compra      Int
+  id_producto    Int
+  cantidad       Int
+  precio_unitario Float
+  subtotal       Float
+
+  // Relaciones
+  compra         Compras   @relation(fields: [id_compra], references: [id])
+  producto       Productos @relation(fields: [id_producto], references: [id])
+}
+
+model Ventas {
+  id             Int              @id @default(autoincrement())
+  id_cliente     Int
+  id_vendedor    Int
+  fecha_venta    DateTime         @default(now())
+  numero_factura String?
+  total          Float
+  estado         String           @default("Pendiente")
+
+  // Relaciones
+  cliente        Usuarios         @relation("Cliente", fields: [id_cliente], references: [id])
+  vendedor       Usuarios         @relation("Vendedor", fields: [id_vendedor], references: [id])
+  detalles       DetallesVenta[]
+}
+
+model DetallesVenta {
+  id             Int       @id @default(autoincrement())
+  id_venta       Int
+  id_producto    Int
+  cantidad       Int
+  precio_unitario Float
+  subtotal       Float
+
+  // Relaciones
+  venta          Ventas    @relation(fields: [id_venta], references: [id])
+  producto       Productos @relation(fields: [id_producto], references: [id])
+}
+
+model Promociones {
+  id             Int                    @id @default(autoincrement())
+  nombre         String
+  descripcion    String
+  descuento      Float
+  fecha_inicio   DateTime
+  fecha_fin      DateTime
+  creado_por     Int
+  fecha_creacion DateTime               @default(now())
+  activo         Boolean                @default(true)
+
+  // Relaciones
+  creador        Usuarios               @relation(fields: [creado_por], references: [id])
+  productos      ProductosPromociones[]
+}
+
+model ProductosPromociones {
+  id           Int        @id @default(autoincrement())
+  id_producto  Int
+  id_promocion Int
+
+  // Relaciones
+  producto     Productos  @relation(fields: [id_producto], references: [id])
+  promocion    Promociones @relation(fields: [id_promocion], references: [id])
+
+  @@unique([id_producto, id_promocion])
+}
+
+model LogsActividad {
+  id          Int      @id @default(autoincrement())
+  id_usuario  Int
+  accion      String
+  tabla       String
+  id_registro Int
+  detalles    String?
+  fecha       DateTime @default(now())
+  ip          String?
+
+  // Relaciones
+  usuario     Usuarios @relation(fields: [id_usuario], references: [id])
+}

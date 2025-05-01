@@ -7,13 +7,18 @@
     "xo",
     "xo/browser"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".mjs", ".astro", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    }
+  },
   "rules": {
     "arrow-body-style": "off",
     "capitalized-comments": "off",
-    "comma-dangle": [
-      "error",
-      "never"
-    ],
+    "comma-dangle": ["error", "never"],
     "indent": [
       "error",
       2,
@@ -22,14 +27,14 @@
         "SwitchCase": 1
       }
     ],
-    "max-params": [
-      "warn",
-      5
-    ],
-    "multiline-ternary": [
+    "import/no-unresolved": [
       "error",
-      "always-multiline"
+      {
+        "ignore": ["^astro/", "^@astrojs/"]
+      }
     ],
+    "max-params": ["warn", 5],
+    "multiline-ternary": ["error", "always-multiline"],
     "new-cap": [
       "error",
       {
@@ -38,18 +43,9 @@
     ],
     "no-console": "error",
     "no-negated-condition": "off",
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-    "operator-linebreak": [
-      "error",
-      "after"
-    ],
-    "semi": [
-      "error",
-      "never"
-    ],
+    "object-curly-spacing": ["error", "always"],
+    "operator-linebreak": ["error", "after"],
+    "semi": ["error", "never"],
     "unicorn/explicit-length-check": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-array-for-each": "off",
@@ -73,10 +69,7 @@
         "xo-typescript"
       ],
       "rules": {
-        "@typescript-eslint/comma-dangle": [
-          "error",
-          "never"
-        ],
+        "@typescript-eslint/comma-dangle": ["error", "never"],
         "@typescript-eslint/indent": [
           "error",
           2,
@@ -92,14 +85,8 @@
             "format": ["camelCase", "StrictPascalCase", "UPPER_CASE"]
           }
         ],
-        "@typescript-eslint/object-curly-spacing": [
-          "error",
-          "always"
-        ],
-        "@typescript-eslint/semi": [
-          "error",
-          "never"
-        ]
+        "@typescript-eslint/object-curly-spacing": ["error", "always"],
+        "@typescript-eslint/semi": ["error", "never"]
       }
     },
     {
@@ -114,6 +101,14 @@
       "rules": {
         "no-console": "off",
         "unicorn/prefer-top-level-await": "off"
+      }
+    },
+    {
+      "files": ["*.astro"],
+      "parser": "astro-eslint-parser",
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser",
+        "extraFileExtensions": [".astro"]
       }
     }
   ]
