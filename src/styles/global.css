@@ -3,3 +3,28 @@
 @import "tailwindcss/utilities";
 
 /* Tus estilos personalizados aquí */
+/* Estilos personalizados adicionales */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Clases de utilidad personalizadas */
+.container {
+  @apply max-w-7xl mx-auto px-4;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-md transition-colors;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-yellow-400 text-gray-800 hover:bg-yellow-500;
+}

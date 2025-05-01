@@ -72,10 +72,10 @@
         "@typescript-eslint/comma-dangle": ["error", "never"],
         "@typescript-eslint/indent": [
           "error",
-          2,
+          2,  // 2 espacios
           {
-            "MemberExpression": "off",
-            "SwitchCase": 1
+            "SwitchCase": 1,
+            "ignoredNodes": ["PropertyDefinition"]
           }
         ],
         "@typescript-eslint/naming-convention": [
